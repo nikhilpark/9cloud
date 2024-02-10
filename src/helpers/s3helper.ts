@@ -19,8 +19,6 @@ interface UploadFileParams {
 
   const bucketName = String(process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME)
 export const uploadFileToS3 = async (file:any) => {
-    console.log("uploadFileToS3",process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,process.env)
-    console.log(File,"file")
   const params: UploadFileParams  = {
     //@ts-ignore
     Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
