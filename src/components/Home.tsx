@@ -6,9 +6,28 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import Card from '@mui/material/Card';
+import Link from "next/link";
+import { getFolderStats } from '@/helpers/s3helper';
 
-const Home = ({user}) => {
-return (
+
+const Home = ({ user }) => {
+  const [folderStats, setFolderStats] = React.useState(null);
+
+React.useEffect(() => {
+  const fetchFolderStats = async () => {
+    try {
+      const stats = await getFolderStats();
+      setFolderStats(stats);
+    } catch (error) {
+      console.error('Error fetching folder stats:', error);
+    }
+  };
+
+  fetchFolderStats();
+}, []);
+
+  return (
     <Container>
       <Head>
         <title>Your App - Home</title>
@@ -16,20 +35,23 @@ return (
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-   
+
 
       <main>
         <Typography variant="h3" component="div" sx={{ mt: 4 }}>
           Welcome, {user.name}!
         </Typography>
 
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          Subscription Tier: {user.subscription}
-        </Typography>
 
-        <Typography variant="h5" component="div" sx={{ mt: 3 }}>
-          Overview of Files:
-        </Typography>
+
+        <div style={{marginTop:'1rem'}}>
+          <Card style={{ padding: '1rem', borderRadius: '14px' }}>
+            <div style={{fontWeight:"600"}}>Your drive stats:</div>
+            <div>Storage used - 100MB/1GB</div>
+            <Link href="/upload">View files</Link>
+            {JSON.stringify(folderStats)}
+          </Card>
+        </div>
 
         {/* {files.map((file) => (
           <Typography key={file.name} variant="body2" sx={{ mt: 1 }}>
@@ -38,11 +60,10 @@ return (
         ))} */}
       </main>
 
-      <footer>
-        <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 5 }}>
-          © {new Date().getFullYear()} Your Company Name
-        </Typography>
-      </footer>
+
     </Container>
-  )}
-  export default Home
+  )
+}
+
+
+export default Home
