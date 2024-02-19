@@ -3,8 +3,10 @@ import React, { useState, ChangeEvent, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
 import Snackbar from '@mui/material/Snackbar';
+
 import LinearProgress from '@mui/material/LinearProgress';
 import { uploadFileToS3, fetchFilesFromS3, generateSignedUrl } from '@/helpers/s3helper';
+import { useUser } from '@auth0/nextjs-auth0/client';
 
 const MAX_FILE_SIZE_MB = 100;
 
@@ -16,6 +18,8 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+  const { user, error, isLoading } = useUser();
+
 
   useEffect(() => {
     // Open the snackbar when progress starts
@@ -43,7 +47,7 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
     if (selectedFile) {
       console.log(selectedFile);
       console.log(`Uploading file: ${selectedFile.name}`);
-      await initiateUpload(selectedFile.name, selectedFile);
+      await initiateUpload(selectedFile);
       console.log(`Uploaded file`);
       // Add your upload logic here, e.g., using FormData and sending to a server
     } else {
@@ -51,10 +55,10 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
     }
   };
 
-  const initiateUpload = async (fileName, file) => {
+  const initiateUpload = async (file:File) => {
     try {
       const expirationTime = 50;
-      const signedUrl = await generateSignedUrl(fileName, expirationTime);
+      const signedUrl:URL = await generateSignedUrl(file.name, expirationTime);
 
       // Create a FormData object and append the file to it
       const formData = new FormData();
@@ -74,6 +78,9 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
       xhr.upload.addEventListener('load', () => {
         console.log('Upload completed!');
         setUploadProgress(100); // Set progress to 100% when upload is completed
+        setTimeout(()=>{
+          window.location.reload()
+        },1000)
       });
 
       // Open the connection and send the file using the signed URL
@@ -87,9 +94,11 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
-
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
   return (
     <div>
+      Hi! {JSON.stringify(user)}
       <Input
         type="file"
         id="fileInput"

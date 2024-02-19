@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
+import {getUserId} from "../actions/mongoActions"
 dotenv.config();
 
 AWS.config.update({
@@ -9,7 +10,7 @@ AWS.config.update({
   });
   
 const s3 = new AWS.S3();
-const folderPrefix = "uploads/"
+const folderPrefix = "uploads"
 interface UploadFileParams {
     Bucket: string;
     Key: string;
@@ -39,7 +40,8 @@ export const uploadFileToS3 = async (file:any) => {
 
 export const fetchFilesFromS3 = async () => {
   try {
-    const data:any = await s3.listObjectsV2({ Bucket: String(process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME), Prefix: "uploads/" }).promise();
+    const userId = await getUserId()
+    const data:any = await s3.listObjectsV2({ Bucket: String(process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME), Prefix: `uploads/${userId}` }).promise();
     console.log(data)
     const files = data.Contents.map((file:any) => ({
       Key: file.Key,
@@ -53,8 +55,9 @@ export const fetchFilesFromS3 = async () => {
 }
 
 
-export const generateSignedUrl = (fileName:any, expiration = 60) => {
-  const key = `${folderPrefix}${fileName}`;
+export const generateSignedUrl = async (fileName:string, expiration = 60) => {
+  const userId = await getUserId()
+  const key = `${folderPrefix}/${userId}/${fileName}`;
 
   const params = {
     Bucket: bucketName,
@@ -63,12 +66,12 @@ export const generateSignedUrl = (fileName:any, expiration = 60) => {
     ACL: 'private', 
   };
 
-  return new Promise((resolve, reject) => {
+  return new Promise<URL>((resolve, reject) => {
     s3.getSignedUrl('putObject', params, (err, url) => {
       if (err) {
         reject(err);
       } else {
-        resolve(url);
+        resolve(new URL(url));
       }
     });
   });
@@ -83,16 +86,7 @@ const calculateExpirationTime = () => {
 };
 
 // Example usage with async/await
-const initiateUpload = async (fileName) => {
-  try {
-    const expirationTime = calculateExpirationTime();
-    const signedUrl = await generateSignedUrl(fileName, expirationTime);
-    
-    return signedUrl
-      } catch (error) {
-    console.error('Error generating signed URL:', error);
-  }
-};
+
 
 export const getSignedUrl = async (key:any) => {
   try {
