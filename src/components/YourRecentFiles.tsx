@@ -34,9 +34,9 @@ const YourRecentFiles = () => {
             <Card style={{ padding: '1rem', borderRadius: '14px',display:'flex',flexDirection:'column',gap:'1rem' }}>
                 <div style={{ fontWeight: '600' }}>Recent files:</div>
                 <div style={{display:'flex',flexDirection:'row',gap:'1rem',flexWrap:'wrap',marginTop:'1rem'}}>
-                {recentFiles.map((file:any)=>{
+                {recentFiles.map((file:any,key:number)=>{
                   const fileName = file.Key.split('/').pop()
-                  return <Card style={{padding:'.4rem 1rem',borderRadius:'14px',background:'rgba(255, 255, 255, 0.2)'}}>
+                  return <Card key={key} style={{padding:'.4rem 1rem',borderRadius:'14px',background:'rgba(255, 255, 255, 0.2)'}}>
                     <div>
                       <Link href={'#'}>{fileName}</Link>
                     </div>
