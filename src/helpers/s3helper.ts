@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import * as dotenv from 'dotenv';
-import { getUserId,getUserProfile,updateFileAccessTime } from "../actions/mongoActions"
+import { getUserId, getUserProfile, updateFileAccessTime } from "../actions/mongoActions"
 import dbPromise from "@/helpers/connectMongo"
 
 dotenv.config();
@@ -18,11 +18,11 @@ interface UploadFileParams {
   Key: string;
   Body: Buffer;
   ACL: 'private' | 'public-read';
-  Metadata:Record<string,string>;
+  Metadata: Record<string, string>;
 
 }
 
-interface S3File {
+export interface S3File {
   Key: string;
   Size: number;
   LastModified: Date;
@@ -52,41 +52,45 @@ export const uploadFileToS3 = async (file: any) => {
   }
 };
 
-export const fetchFilesFromS3 = async () => {
+export const fetchFilesFromS3 = async (): Promise<S3File[]> => {
   try {
     const userId = await getUserId()
     const data: any = await s3.listObjectsV2({ Bucket: String(process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME), Prefix: `uploads/${userId}` }).promise();
     console.log(data)
-    const files = await Promise.all(data.Contents.map(async (file:any) => {
-      const headObjectData:any = await s3.headObject({ Bucket: String(process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME), Key: file.Key }).promise();
-      console.log(headObjectData.Metadata,"metadata",file.Key,headObjectData)
+    const files = await Promise.all(data.Contents.map(async (file: any) => {
+      const headObjectData: any = await s3.headObject({ Bucket: String(process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME), Key: file.Key }).promise();
+      console.log(headObjectData.Metadata, "metadata", file.Key, headObjectData)
       return {
         Key: file.Key,
         Size: file.Size,
         LastModified: file.LastModified,
         ETag: file.ETag,
-        abcd:"wfg",
         LastAccessTime: headObjectData.Metadata['x-amz-meta-last-access-time'], // Access the specific metadata field
       } as S3File
     }));
-    
-    
-    return files 
+
+
+    return files;
+
+
   } catch (error) {
+
     console.error('Error fetching files:', error);
+    
   }
+  return [];
 }
 
-export const fetchRecentFilesFromS3 = async (count:number) => {
+export const fetchRecentFilesFromS3 = async (count: number) => {
   try {
     // Fetch all files
-    
-    const allFiles:any = await fetchFilesFromS3();
-const userD = await getUserProfile()
-const recentFiles = JSON.parse(userD).recentFiles
-console.log(recentFiles,"recentFiles")
-//@ts-ignore
-const filteredFiles = allFiles.filter(file=>recentFiles.some(recentFile=>recentFile.key == file.Key))
+
+    const allFiles: any = await fetchFilesFromS3();
+    const userD = await getUserProfile()
+    const recentFiles = JSON.parse(userD).recentFiles
+    console.log(recentFiles, "recentFiles")
+    //@ts-ignore
+    const filteredFiles = allFiles.filter(file => recentFiles.some(recentFile => recentFile.key == file.Key))
     // Sort files based on LastAccessTime in descending order
     const outFiles: S3File[] = filteredFiles.map(file => {
       const recentFile = recentFiles.find(recentFile => recentFile.key === file.Key);
@@ -122,7 +126,7 @@ export const generateSignedUrl = async (fileName: string, expiration = 60) => {
       'x-amz-meta-last-access-time': new Date().toISOString(),
     },
   };
-await updateFileAccessTime(userId, key)
+  await updateFileAccessTime(userId, key)
 
   return new Promise<URL>((resolve, reject) => {
     s3.getSignedUrl('putObject', params, (err, url) => {
@@ -152,8 +156,8 @@ export const formatFileSize = (sizeInBytes: number): string => {
 export const getFolderStats = async (): Promise<{
   totalSize: string;
   fileCount: number;
-  totalSizeInBytes:number;
-  folderDetails:Record<string, { size: string; count: number,sizeInBytes:number }>;
+  totalSizeInBytes: number;
+  folderDetails: Record<string, { size: string; count: number, sizeInBytes: number }>;
 }> => {
   try {
     const userId = await getUserId();
@@ -169,7 +173,7 @@ export const getFolderStats = async (): Promise<{
     let fileCount = 0;
     const fileTypeCounts: Record<string, number> = {};
     const fileSizeByType: Record<string, number> = {};
-    const fileTypeSize: Record<string, { size: string; count: number,sizeInBytes:number }> = {};
+    const fileTypeSize: Record<string, { size: string; count: number, sizeInBytes: number }> = {};
 
     files.forEach((file: any) => {
       totalSize += file.Size;
@@ -185,21 +189,21 @@ export const getFolderStats = async (): Promise<{
         fileTypeSize[fileExtension] = {
           size: formatFileSize(fileSizeByType[fileExtension] || 0),
           count: fileTypeCounts[fileExtension] || 0,
-          sizeInBytes:fileSizeByType[fileExtension] || 0
+          sizeInBytes: fileSizeByType[fileExtension] || 0
         };
       }
     });
     const formattedSize = formatFileSize(totalSize)
-    
+
     const formattedSizeByType = Object.fromEntries(
       Object.entries(fileSizeByType).map(([key, value]) => [key, formatFileSize(Number(value))])
     )
 
     return {
       totalSize: formattedSize,
-      totalSizeInBytes:totalSize,
+      totalSizeInBytes: totalSize,
       fileCount,
-      folderDetails:fileTypeSize
+      folderDetails: fileTypeSize
     };
   } catch (error) {
     console.error('Error getting folder stats:', error);

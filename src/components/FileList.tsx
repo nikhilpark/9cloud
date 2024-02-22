@@ -6,8 +6,8 @@ import {
 } from 'react-icons/ai';
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 
-import { fetchFilesFromS3, getSignedUrl } from '@/helpers/s3helper';
-import { getFileType, formatFileSize } from '@/helpers/helpers';
+import { fetchFilesFromS3, getSignedUrl,S3File } from '@/helpers/s3helper';
+import { getFileType, formatFileSize,getTimeDifference } from '@/helpers/helpers';
 
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
@@ -20,20 +20,24 @@ import Typography from '@mui/material/Typography';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import InfoIcon from '@mui/icons-material/Info';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CloseIcon from '@mui/icons-material/Close';
+import Dialog from '@mui/material/Dialog';
+
 
 const FileList = () => {
-  const [files, setFiles] = useState([]);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [files, setFiles] = useState<S3File[]>([]);
+  const [selectedFile, setSelectedFile] = useState<null | S3File>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
   const [filterType, setFilterType] = useState('all'); // 'all', 'pdf', 'word', 'excel', 'text', etc.
   const [menuOpen,setMenuOpen] = useState(false);
+  const [infoDialogOpen,setInfoDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fetchedFiles = await fetchFilesFromS3();
+        const fetchedFiles: Array<S3File> = await fetchFilesFromS3();
         setFiles(fetchedFiles);
       } catch (error) {
         console.error('Error fetching files:', error);
@@ -43,7 +47,7 @@ const FileList = () => {
     fetchData();
   }, []);
 
-  const handleFileClick = (file) => {
+  const handleFileClick = (file:S3File) => {
     setSelectedFile(file);
   };
 
@@ -125,6 +129,56 @@ const extension = key.split('.').pop()
     return iconMap[fileType] || iconMap.default;
 };
 
+const handleFileAction = (action:string,file:S3File) => {
+  setSelectedFile(file)
+  if(action =="rename"){
+    
+  } else if(action =="delete"){
+
+  } else if(action =="info"){
+    setInfoDialogOpen(true)
+
+  } else {
+    console.log("Invalid action: " + action)
+  }
+}
+
+const InfoDialog =  () => {
+  const fileName = selectedFile ? selectedFile.Key.split("/").pop() : ""
+  return (<Dialog
+    open={infoDialogOpen}
+    onClose={()=>{
+      setInfoDialogOpen(false)
+      setAnchorEl(null)
+      setSelectedFile(null)
+    }}
+    aria-labelledby="alert-dialog-title"
+    aria-describedby="alert-dialog-description"
+  >
+    <div style={{display:'flex',justifyContent:'flex-end',margin:'.6rem .4rem'}} ><CloseIcon style={{cursor:'pointer'}} onClick={()=>{setInfoDialogOpen(false)
+    setSelectedFile(null)
+    }}  /></div>
+    <Divider/>
+    {selectedFile &&<>
+      <div style={{width:'300px',height:'400px',padding:'1rem',display:'flex',flexDirection:'column',gap:'.4rem',marginTop:'1rem'}}>
+    <div>
+      <b>File Name : </b>{fileName}
+    </div>
+    <Divider/>
+    <div>
+     <b>File Size :</b>  {formatFileSize(selectedFile.Size)}
+    </div>
+    <Divider/>
+    <div>
+     <b>Last Modified :</b>  {new Date(selectedFile.LastModified).toISOString()}
+    </div>
+    </div>
+    </>}
+  
+    
+  </Dialog>)
+}
+
   return (
     <div>
 
@@ -184,20 +238,27 @@ const extension = key.split('.').pop()
         }}
       >
                 <MenuList>
-                <MenuItem onClick={()=>{setAnchorEl(null)}}>
+                <MenuItem onClick={()=>{handleFileAction("rename",file)
+              
+              }}>
           <ListItemIcon>
             <DriveFileRenameOutlineIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Rename</ListItemText>
         </MenuItem>
-        <MenuItem onClick={()=>{setAnchorEl(null)}}>
+        <MenuItem onClick={()=>{
+          handleFileAction("delete",file)
+          }}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
           <ListItemText>Delete</ListItemText>
         
         </MenuItem>
-        <MenuItem onClick={()=>{setAnchorEl(null)}}>
+        <MenuItem onClick={()=>{handleFileAction("info",file)
+                setAnchorEl(null)
+
+      }}>
           <ListItemIcon>
             <InfoIcon fontSize="small" />
           </ListItemIcon>
@@ -217,7 +278,7 @@ const extension = key.split('.').pop()
             </Card>
           })}
         </div>
-
+{InfoDialog()}
         {/* <Grid style={{margin:'2vh 0'}} container spacing={2}>
         <Grid item xs={6} sm={4}>
           <TextField
