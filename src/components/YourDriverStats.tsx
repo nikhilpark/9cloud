@@ -43,8 +43,7 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-around',flexWrap:'wrap',gap:'2rem',alignItems:'center'}} >
                             {/* Display Pie Chart */}
-
-                            <ReactApexChart
+{window != null &&   <ReactApexChart
                                 options={{
                                     labels: pieChartData.labels,
                                     colors: ['#85C1E9', '#154360'],
@@ -90,7 +89,8 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
                                 }}
                                 type="pie" width={540}
                                 series={pieChartData.series}
-                            />
+                            />}
+                          
 
                             <div style={{display:'flex',gap:'1rem',flexDirection:'column'}}>
                                 {Object.keys(folderStats.folderDetails).map((key) => {
