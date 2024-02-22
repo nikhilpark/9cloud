@@ -8,17 +8,21 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Card from '@mui/material/Card';
 import Link from "next/link";
+import YourDriveStatsCard from './YourDriverStats';
+import YourRecentFiles from './YourRecentFiles';
 import { getFolderStats } from '@/helpers/s3helper';
 
 
 const Home = ({ user }) => {
-  const [folderStats, setFolderStats] = React.useState(null);
+  const [folderStats, setFolderStats] = React.useState<any>();
+  const [folderStatsLoading,setFolderStatsLoading] = React.useState(true);
 
 React.useEffect(() => {
   const fetchFolderStats = async () => {
     try {
       const stats = await getFolderStats();
       setFolderStats(stats);
+      setFolderStatsLoading(false)
     } catch (error) {
       console.error('Error fetching folder stats:', error);
     }
@@ -45,12 +49,10 @@ React.useEffect(() => {
 
 
         <div style={{marginTop:'1rem'}}>
-          <Card style={{ padding: '1rem', borderRadius: '14px' }}>
-            <div style={{fontWeight:"600"}}>Your drive stats:</div>
-            <div>Storage used - 100MB/1GB</div>
-            <Link href="/upload">View files</Link>
-            {JSON.stringify(folderStats)}
-          </Card>
+        <YourDriveStatsCard folderStats={folderStats} folderStatsLoading={folderStatsLoading}/>
+        </div>
+        <div style={{marginTop:'1rem'}}>
+        <YourRecentFiles  />
         </div>
 
         {/* {files.map((file) => (

@@ -6,7 +6,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import AppBar from '@/components/AppBar';
 import theme from '@/theme';
-
+import "./globals.css"
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html lang="en">

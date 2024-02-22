@@ -15,8 +15,9 @@ const AppB = () => {
     <div>
       <AppBar position="static">
         <Toolbar>
+        <img onClick={() => { router.push('/') }} src="/logo.png" alt="logo" height="80px"  style={{cursor: "pointer" }} />
           <Typography onClick={() => { router.push('/') }} variant="h6" component="div" sx={{ flexGrow: 1, cursor: "pointer" }}>
-            9Cloud
+            
           </Typography>
           {isLoading?<CircularProgress/>:user ? <div>
             <Button color="inherit" onClick={() => { router.push('/api/auth/logout') }} >Logout</Button>
