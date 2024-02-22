@@ -70,7 +70,7 @@ export const fetchFilesFromS3 = async (): Promise<S3File[]> => {
     }));
 
 
-    return files;
+    return files; 
 
 
   } catch (error) {
