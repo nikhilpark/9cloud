@@ -5,7 +5,9 @@ import Icon from '@mui/material/Icon';
 import Link from 'next/link';
 import { RiFileTextFill, RiImageFill, RiVideoFill, RiFileFill } from 'react-icons/ri'; // Import icons as needed
 import dynamic from 'next/dynamic'; // Import dynamic from 'next/dynamic' to dynamically import ReactApexChart
-import ReactApexChart from 'react-apexcharts';
+// import ReactApexChart from 'react-apexcharts';
+const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
+
 import { getFileType, formatFileSize } from '@/helpers/helpers';
 
 const getFileTypeIcon = (extension: any) => {
@@ -16,8 +18,8 @@ const getFileTypeIcon = (extension: any) => {
     const iconMap: Record<string, React.ReactElement> = {
         "text": <Icon ><img src="/icons/text.svg" alt="text" /></Icon>,
         "image": <RiImageFill />,
-        "video":<img  src="/icons/video_dark.svg" alt="video" height="40px" />,
-        "document":<img  src="/icons/document_dark.svg" alt="document" height="40px" />,
+        "video": <img src="/icons/video_dark.svg" alt="video" height="40px" />,
+        "document": <img src="/icons/document_dark.svg" alt="document" height="40px" />,
         "default": <RiFileFill />,
     };
 
@@ -26,10 +28,16 @@ const getFileTypeIcon = (extension: any) => {
 
 const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
     // Extract data for the pie chart
+
+
+
+
+
     const pieChartData = {
         labels: ['Used Storage', 'Remaining Storage'],
-        series: [folderStats?.totalSizeInBytes, 1000000000],
+        series: [30000000, 1000000000],
     };
+
 
     return (
         <div style={{ marginTop: '1rem' }}>
@@ -41,9 +49,9 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
                 </div> */}
                 {!folderStatsLoading ? (
                     <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-around',flexWrap:'wrap',gap:'2rem',alignItems:'center'}} >
+                        <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', gap: '2rem', alignItems: 'center' }} >
                             {/* Display Pie Chart */}
-{window != null &&   <ReactApexChart
+                        <ReactApexChart
                                 options={{
                                     labels: pieChartData.labels,
                                     colors: ['#85C1E9', '#154360'],
@@ -79,20 +87,21 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
                                             color: 'white',
                                             opacity: .4
                                         },
-                                        formatter(val: number, opts) {
-                                            const name = opts.w.globals.labels[opts.seriesIndex]
-                                            const data = opts.w.globals.series[opts.seriesIndex]
-                                            return [name, formatFileSize(data)]
-                                        }
+                                        // formatter(val: number, opts) {
+                                        //     const name = opts.w.globals.labels[opts.seriesIndex]
+                                        //     const data = opts.w.globals.series[opts.seriesIndex]
+                                        //     return [name, formatFileSize(data)]
+                                        // }
                                     }
 
                                 }}
-                                type="pie" width={540}
+                                type="pie" width={"500"}
+                                height={"500"}
                                 series={pieChartData.series}
-                            />}
-                          
+                            />
 
-                            <div style={{display:'flex',gap:'1rem',flexDirection:'column'}}>
+
+                            <div style={{ display: 'flex', gap: '1rem', flexDirection: 'column' }}>
                                 {Object.keys(folderStats.folderDetails).map((key) => {
                                     const val = folderStats.folderDetails[key];
 
@@ -101,17 +110,17 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
                                     return (
                                         <div key={key} >
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                {getFileTypeIcon(key)}  <span style={{fontSize:'1rem',marginLeft:'10px'}}><Link href={`/files?fileType=${key}`} >{getFileType(key).toUpperCase()}S</Link> </span> <span style={{fontSize:'1rem',marginLeft:'4px'}}>({val.count})</span>
+                                                {getFileTypeIcon(key)}  <span style={{ fontSize: '1rem', marginLeft: '10px' }}><Link href={`/files?fileType=${key}`} >{getFileType(key).toUpperCase()}S</Link> </span> <span style={{ fontSize: '1rem', marginLeft: '4px' }}>({val.count})</span>
                                             </div>
                                             {/* Display progress bar for each file type */}
-                                            <div style={{ display: 'flex',width:'400px' }}>
+                                            <div style={{ display: 'flex', width: '400px' }}>
                                                 <div
                                                     style={{
                                                         width: `${percentage}%`,
                                                         height: '14px',
                                                         backgroundColor: '#85C1E9',
                                                         marginTop: '5px',
-                                                      
+
 
                                                         borderRadius: '4px'
                                                     }}
@@ -122,7 +131,7 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
                                                         height: '14px',
                                                         backgroundColor: '#154360',
                                                         borderRadius: '4px',
-                        
+
                                                         marginTop: '5px',
 
                                                     }}
