@@ -28,12 +28,12 @@ if(!session){
 return  <LandingPage/>
 } else {
 
-  const stats = await getFolderStats()
+  // const stats = await getFolderStats()
   
-    // const [stats,recentFiles] = await Promise.all( [getFolderStats(),fetchRecentFilesFromS3(5)]) 
-    //   console.log(recentFiles,"recentFiles")
+    const [stats,recentFiles] = await Promise.all( [getFolderStats(),fetchRecentFilesFromS3(5)]) 
+      // console.log(recentFiles,"recentFiles")
 
-      return <Home user={session.user} folderStats={stats} recentFiles={{}} />
+      return <Home user={session.user} folderStats={stats} recentFiles={recentFiles} />
   }
 
  

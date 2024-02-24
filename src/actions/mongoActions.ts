@@ -12,7 +12,6 @@ export async function getUserProfile() {
     const uid = getUidFromSub(user.sub)
 
     const mongoUser = await db.connection.collection("users").findOne({ uid: uid })
-    console.log(mongoUser, "mongoUser")
     if (mongoUser) return JSON.stringify(mongoUser)
     const newUser = {
         email: user.email,
@@ -27,11 +26,9 @@ export async function getUserProfile() {
 }
 export async function getUserId() {
   try{
-    console.log("Getting user id")
+
     const db = await dbPromise()
-console.log("After db")
     let session = await getSession();
-    console.log("session",session)
     if (!session) return JSON.stringify('')
     const user = session.user
     const uid = getUidFromSub(user.sub)
