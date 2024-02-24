@@ -1,3 +1,4 @@
+"use client"
 import React from 'react';
 import Head from 'next/head';
 import AppBar from '@mui/material/AppBar';
@@ -5,8 +6,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
+import { useRouter } from 'next/navigation';
 
 const LandingPage = () => {
+  const router = useRouter()
+
   return (
     <Container>
       <Head>
@@ -39,8 +43,8 @@ const LandingPage = () => {
           Get started today and experience the convenience of 9Cloud!
         </Typography>
 
-        <Button variant="contained" color="primary" sx={{ mt: 3 }}>
-          Sign Up for Free
+        <Button onClick={() => { router.push('/api/auth/login') }} variant="contained" color="primary" sx={{ mt: 3 }}>
+          Get started!
         </Button>
       </main>
 
