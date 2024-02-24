@@ -15,20 +15,29 @@ import { getSession } from '@auth0/nextjs-auth0';
 import Home from '@/components/Home'
 import LandingPage from '@/components/LandingPage'
 import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
+import { getFolderStats } from '@/helpers/s3helper';
+import { fetchRecentFilesFromS3 } from '@/helpers/s3helper';
 
 
 
 export default async function HomePage() {
 
   const  session = await getSession()
-
+console.log(session,"24")
 if(!session){
 return  <LandingPage/>
 } else {
-  return <Home user={session.user}/>
-}
+    
+      const stats = await getFolderStats();
+      const recentFiles = await fetchRecentFilesFromS3(6)
+      console.log(recentFiles,"recentFiles")
 
-const user = session.user  // const { user, error, isLoading } = useUser();
+      return <Home user={session.user} folderStats={stats} recentFiles={recentFiles} />
+  }
+
+ 
+
+ // const { user, error, isLoading } = useUser();
 
   // async function getUsers() {
   //   const user = JSON.parse(await getUserProfile())

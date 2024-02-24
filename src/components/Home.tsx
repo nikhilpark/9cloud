@@ -1,5 +1,5 @@
 
-"use client"
+"use server"
 import React from 'react';
 import Head from 'next/head';
 import AppBar from '@mui/material/AppBar';
@@ -14,26 +14,26 @@ import YourRecentFiles from './YourRecentFiles';
 import { getFolderStats } from '@/helpers/s3helper';
 
 
-const Home = ({ user }) => {
+const Home = ({ user,folderStats,recentFiles }:any) => {
 
-  console.log("HOMEEEE")
+  console.log("HOMEEEE",user,)
 
-  const [folderStats, setFolderStats] = React.useState<any>();
-  const [folderStatsLoading,setFolderStatsLoading] = React.useState(true);
+  // const [folderStats, setFolderStats] = React.useState<any>();
+  // const [folderStatsLoading,setFolderStatsLoading] = React.useState(true);
 
-React.useEffect(() => {
-  const fetchFolderStats = async () => {
-    try {
-      const stats = await getFolderStats();
-      setFolderStats(stats);
-      setFolderStatsLoading(false)
-    } catch (error) {
-      console.error('Error fetching folder stats:', error);
-    }
-  };
+// React.useEffect(() => {
+//   const fetchFolderStats = async () => {
+//     try {
+//       const stats = await getFolderStats();
+//       setFolderStats(stats);
+//       setFolderStatsLoading(false)
+//     } catch (error) {
+//       console.error('Error fetching folder stats:', error);
+//     }
+//   };
 
-  fetchFolderStats();
-}, []);
+//   fetchFolderStats();
+// }, []);
 
   return (
     <Container>
@@ -53,10 +53,10 @@ React.useEffect(() => {
 
 
         <div style={{marginTop:'1rem'}}>
-        <YourDriveStatsCard folderStats={folderStats} folderStatsLoading={folderStatsLoading}/>
+        <YourDriveStatsCard folderStats={folderStats} folderStatsLoading={false}/>
         </div>
         <div style={{marginTop:'1rem'}}>
-        <YourRecentFiles  />
+        <YourRecentFiles recentFiles = {recentFiles}  />
         </div>
 
         {/* {files.map((file) => (
@@ -65,7 +65,7 @@ React.useEffect(() => {
           </Typography>
         ))} */}
       </main>
-dsasdasda
+
 
     </Container>
   )

@@ -10,25 +10,25 @@ import { getFileType, formatFileSize,getTimeDifference } from '@/helpers/helpers
 import { fetchRecentFilesFromS3 } from '@/helpers/s3helper';
 
 
-const YourRecentFiles = () => {
+const YourRecentFiles = ({recentFiles}:any) => {
     // Extract data for the pie chart
 
-    const [recentFiles,setRecentFiles] = React.useState<any>([])
-    const [recentFilesLoading,setRecentFilesLoading] = React.useState(true)
+    // const [recentFiles,setRecentFiles] = React.useState<any>([])
+    // const [recentFilesLoading,setRecentFilesLoading] = React.useState(true)
     const router = useRouter()
-    React.useEffect(() => {
-        const fetchRecentFiles = async () => {
-          try {
-            const stats = await fetchRecentFilesFromS3(5);
-            setRecentFiles(stats);
-            setRecentFilesLoading(false)
-          } catch (error) {
-            console.error('Error fetching recent files', error);
-          }
-        };
+    // React.useEffect(() => {
+    //     const fetchRecentFiles = async () => {
+    //       try {
+    //         const stats = await fetchRecentFilesFromS3(5);
+    //         setRecentFiles(stats);
+    //         setRecentFilesLoading(false)
+    //       } catch (error) {
+    //         console.error('Error fetching recent files', error);
+    //       }
+    //     };
       
-        fetchRecentFiles();
-      }, []);
+    //     fetchRecentFiles();
+    //   }, []);
     return (
         <div style={{ marginTop: '1rem' }}>
             <Card style={{ padding: '1rem', borderRadius: '14px',display:'flex',flexDirection:'column',gap:'1rem' }}>
