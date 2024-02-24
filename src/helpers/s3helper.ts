@@ -160,9 +160,12 @@ export const getFolderStats = async (): Promise<{
   folderDetails: Record<string, { size: string; count: number, sizeInBytes: number }>;
 }> => {
   try {
+
+    console.log("GET FOLDER STATS")
+
     const userId = await getUserId();
     const folderPrefix = `uploads/${userId}`;
-
+    console.log("GET FOLDER STATS",folderPrefix)
     const data: any = await s3.listObjectsV2({
       Bucket: bucketName,
       Prefix: folderPrefix,
