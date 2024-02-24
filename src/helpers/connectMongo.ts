@@ -15,8 +15,6 @@ async function connectToDB() {
 
   if (!cached.promise) {
     cached.promise = await mongoose.connect(`${process.env.MONGODB_STRING}`,{
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
         dbName: '9cloud',
       });
   }

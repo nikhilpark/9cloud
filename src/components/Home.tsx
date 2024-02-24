@@ -1,5 +1,3 @@
-
-"use server"
 import React from 'react';
 import Head from 'next/head';
 import AppBar from '@mui/material/AppBar';
