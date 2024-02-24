@@ -163,7 +163,14 @@ export const getFolderStats = async (): Promise<{
 
     console.log("GET FOLDER STATS")
 
-    const userId = await getUserId();
+    let userId = null
+try{
+   userId = await getUserId();
+
+} catch(err){
+  console.log(err,"EREROR IN USERID")
+}
+console.log(userId,"USERIDDD")
     const folderPrefix = `uploads/${userId}`;
     console.log("GET FOLDER STATS",folderPrefix)
     const data: any = await s3.listObjectsV2({
