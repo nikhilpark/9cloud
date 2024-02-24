@@ -53,9 +53,9 @@ const Home = ({ user,folderStats,recentFiles }:any) => {
         <div style={{marginTop:'1rem'}}>
         <YourDriveStatsCard folderStats={folderStats} folderStatsLoading={false}/>
         </div>
-        {/* <div style={{marginTop:'1rem'}}>
+        <div style={{marginTop:'1rem'}}>
         <YourRecentFiles recentFiles = {recentFiles}  />
-        </div> */}
+        </div>
 
         {/* {files.map((file) => (
           <Typography key={file.name} variant="body2" sx={{ mt: 1 }}>
