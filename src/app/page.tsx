@@ -24,12 +24,11 @@ export default async function HomePage() {
 
   const  session = await getSession()
 console.log(session,"24")
-if(!session){
+if(!session){ 
 return  <LandingPage/>
 } else {
     
-      const stats = await getFolderStats();
-      const recentFiles = await fetchRecentFilesFromS3(6)
+    const [stats,recentFiles] = await Promise.all( [getFolderStats(),fetchRecentFilesFromS3(5)]) 
       console.log(recentFiles,"recentFiles")
 
       return <Home user={session.user} folderStats={stats} recentFiles={recentFiles} />
