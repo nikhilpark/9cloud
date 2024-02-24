@@ -1,10 +1,11 @@
 
+"use server"
 import Upload from "@/components/Upload"
 import FileList from "@/components/FileList"
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Container from '@mui/material/Container'
 import Head from 'next/head'
-export default function Page() {
+export default async function Page() {
    
 
     return (

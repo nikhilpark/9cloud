@@ -1,4 +1,5 @@
 
+"use client"
 import React from 'react';
 import Head from 'next/head';
 import AppBar from '@mui/material/AppBar';
@@ -14,6 +15,9 @@ import { getFolderStats } from '@/helpers/s3helper';
 
 
 const Home = ({ user }) => {
+
+  console.log("HOMEEEE")
+
   const [folderStats, setFolderStats] = React.useState<any>();
   const [folderStatsLoading,setFolderStatsLoading] = React.useState(true);
 
@@ -61,7 +65,7 @@ React.useEffect(() => {
           </Typography>
         ))} */}
       </main>
-
+dsasdasda
 
     </Container>
   )

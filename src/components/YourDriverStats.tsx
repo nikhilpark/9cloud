@@ -35,7 +35,7 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
 
     const pieChartData = {
         labels: ['Used Storage', 'Remaining Storage'],
-        series: [30000000, 1000000000],
+        series: [folderStats?.totalSizeInBytes, 1000000000],
     };
 
 
@@ -87,11 +87,11 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
                                             color: 'white',
                                             opacity: .4
                                         },
-                                        // formatter(val: number, opts) {
-                                        //     const name = opts.w.globals.labels[opts.seriesIndex]
-                                        //     const data = opts.w.globals.series[opts.seriesIndex]
-                                        //     return [name, formatFileSize(data)]
-                                        // }
+                                        formatter(val: number, opts) {
+                                            const name = opts.w.globals.labels[opts.seriesIndex]
+                                            const data = opts.w.globals.series[opts.seriesIndex]
+                                            return [name, formatFileSize(data)]
+                                        }
                                     }
 
                                 }}

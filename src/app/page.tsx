@@ -1,4 +1,4 @@
-"use client"
+
 import * as React from 'react';
 import Head from 'next/head';
 import AppBar from '@mui/material/AppBar';
@@ -11,27 +11,40 @@ import Link from '@mui/material/Link';
 import NextLink from 'next/link';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import {getUserProfile} from '@/actions/mongoActions';
+import { getSession } from '@auth0/nextjs-auth0';
 import Home from '@/components/Home'
 import LandingPage from '@/components/LandingPage'
+import type { InferGetServerSidePropsType, GetServerSideProps } from 'next'
 
 
-export default function HomePage() {
-  const { user, error, isLoading } = useUser();
-  const [users,setUsers] = React.useState()
 
-  async function getUsers() {
-    const user = JSON.parse(await getUserProfile())
-    console.log(user,18)
-    setUsers(user)
-  }
-    React.useEffect(()=>{
-      getUsers()
-  
-  },[])
+export default async function HomePage() {
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
-if(user) return <Home user={user}/>
+  const  session = await getSession()
 
-      return <LandingPage/>
+if(!session){
+return  <LandingPage/>
+} else {
+  return <Home user={session.user}/>
 }
+
+const user = session.user  // const { user, error, isLoading } = useUser();
+
+  // async function getUsers() {
+  //   const user = JSON.parse(await getUserProfile())
+  //   console.log(user,18)
+  //   setUsers(user)
+  // }
+  //   React.useEffect(()=>{
+  //     getUsers()
+  
+  // },[])
+
+//   if (isLoading) return <div>Loading...</div>;
+//   if (error) return <div>{error.message}</div>;
+// if(user) return <Home user={user}/>
+
+//       return <LandingPage/>
+// }
+}
+
