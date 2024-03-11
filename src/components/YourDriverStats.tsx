@@ -26,7 +26,7 @@ const getFileTypeIcon = (extension: any) => {
     return iconMap[fileType] || iconMap.default;
 };
 
-const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
+const YourDriveStatsCard = ({ folderStats, folderStatsLoading,user }: any) => {
     // Extract data for the pie chart
 
 
@@ -35,7 +35,7 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading }: any) => {
 
     const pieChartData = {
         labels: ['Used Storage', 'Remaining Storage'],
-        series: [folderStats?.totalSizeInBytes, 1000000000],
+        series: [folderStats?.totalSizeInBytes, user?.planData?.maxStorage],
     };
 
 

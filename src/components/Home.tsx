@@ -9,6 +9,7 @@ import Card from '@mui/material/Card';
 import Link from "next/link";
 import YourDriveStatsCard from './YourDriverStats';
 import YourRecentFiles from './YourRecentFiles';
+import YourPlan from './YourPlan';
 import { getFolderStats } from '@/helpers/s3helper';
 
 
@@ -51,10 +52,13 @@ const Home = ({ user,folderStats,recentFiles }:any) => {
 
 
         <div style={{marginTop:'1rem'}}>
-        <YourDriveStatsCard folderStats={folderStats} folderStatsLoading={false}/>
+        <YourDriveStatsCard user={user}  folderStats={folderStats} folderStatsLoading={false}/>
         </div>
         <div style={{marginTop:'1rem'}}>
-        <YourRecentFiles recentFiles = {recentFiles}  />
+        <YourRecentFiles recentFiles = {recentFiles} user={user}    />
+        </div>
+        <div style={{marginTop:'1rem'}}>
+        <YourPlan  user={user}    />
         </div>
 
         {/* {files.map((file) => (

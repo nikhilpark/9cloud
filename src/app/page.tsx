@@ -30,10 +30,10 @@ return  <LandingPage/>
 
   // const stats = await getFolderStats()
   
-    const [stats,recentFiles] = await Promise.all( [getFolderStats(),fetchRecentFilesFromS3(5)]) 
+    const [stats,recentFiles,mongoUser] = await Promise.all( [getFolderStats(),fetchRecentFilesFromS3(5),getUserProfile()]) 
       // console.log(recentFiles,"recentFiles")
 
-      return <Home user={session.user} folderStats={stats} recentFiles={recentFiles} />
+      return <Home user={JSON.parse(mongoUser)} folderStats={stats} recentFiles={recentFiles} />
   }
 
  

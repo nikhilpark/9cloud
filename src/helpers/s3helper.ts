@@ -88,6 +88,9 @@ export const fetchRecentFilesFromS3 = async (count: number) => {
     const allFiles: any = await fetchFilesFromS3();
     const userD = await getUserProfile()
     const recentFiles = JSON.parse(userD).recentFiles
+    if(!recentFiles || recentFiles.length ==0) {
+      return ([])
+    }
     console.log(recentFiles, "recentFiles")
     //@ts-ignore
     const filteredFiles = allFiles.filter(file => recentFiles.some(recentFile => recentFile.key == file.Key))

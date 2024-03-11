@@ -3,6 +3,8 @@ import React, { useState, ChangeEvent, useEffect } from 'react';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
 import Snackbar from '@mui/material/Snackbar';
+import Dialog from '@mui/material/Dialog';
+import Card from '@mui/material/Card';
 
 import LinearProgress from '@mui/material/LinearProgress';
 import { uploadFileToS3, fetchFilesFromS3, generateSignedUrl } from '@/helpers/s3helper';
@@ -18,8 +20,7 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const { user, error, isLoading } = useUser();
-
+  const [uploadDialogOpen,setUploadDilaogOpen] = useState<boolean>(false);
 
   useEffect(() => {
     // Open the snackbar when progress starts
@@ -94,22 +95,23 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
   const handleCloseSnackbar = () => {
     setSnackbarOpen(false);
   };
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
-  return (
-    <div>
-      Hi! {JSON.stringify(user)}
-      <Input
-        type="file"
-        id="fileInput"
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-      />
-      <label htmlFor="fileInput">
-        <Button variant="contained" color="primary" component="span">
-          Choose File
-        </Button>
-      </label>
+
+
+  const UploadDialog =  () => {
+    return (<Dialog
+      open={Boolean(selectedFile)}
+      onClose={()=>{
+        setSelectedFile(null)
+      }}
+      aria-labelledby="alert-dialog-title"
+      aria-describedby="alert-dialog-description"
+    >
+
+<div>
+<Card style={{  padding:'2rem'}}>
+
+      
+
       {selectedFile && (
         <div>
           <p>Selected File: {selectedFile.name}</p>
@@ -118,9 +120,38 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
             color="primary"
             onClick={handleUploadClick}
           >
-            Upload
-          </Button>
-          {uploadProgress > 0 && (
+Upload          </Button>
+      
+        </div>
+      )}
+
+     </Card>
+    </div>
+
+     
+     
+      
+    </Dialog>)
+  }
+
+
+  return (
+    <div>
+  
+  <Input
+        type="file"
+        id="fileInput"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+      <label htmlFor="fileInput">
+        <Button   variant="contained" color="primary" component="span">
+        Upload
+        </Button>
+      </label>
+
+    <UploadDialog/>
+        {uploadProgress > 0 && (
             <Snackbar
               open={snackbarOpen}
               autoHideDuration={6000} // Adjust as needed
@@ -129,8 +160,6 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
               anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             />
           )}
-        </div>
-      )}
     </div>
   );
 };
