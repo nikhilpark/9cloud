@@ -5,6 +5,7 @@ import Input from '@mui/material/Input';
 import Snackbar from '@mui/material/Snackbar';
 import Dialog from '@mui/material/Dialog';
 import Card from '@mui/material/Card';
+import { useRouter } from 'next/navigation'
 
 import LinearProgress from '@mui/material/LinearProgress';
 import { uploadFileToS3, fetchFilesFromS3, generateSignedUrl } from '@/helpers/s3helper';
@@ -21,7 +22,7 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
   const [uploadDialogOpen,setUploadDilaogOpen] = useState<boolean>(false);
-
+const router = useRouter()
   useEffect(() => {
     // Open the snackbar when progress starts
     if (uploadProgress > 0 && uploadProgress < 100) {
@@ -78,9 +79,10 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
 
       xhr.upload.addEventListener('load', () => {
         console.log('Upload completed!');
-        setUploadProgress(100); // Set progress to 100% when upload is completed
+        setUploadProgress(100);
+        setSelectedFile(null) // Set progress to 100% when upload is completed
         setTimeout(()=>{
-          window.location.reload()
+          router.refresh()
         },1000)
       });
 
@@ -150,7 +152,7 @@ Upload          </Button>
         </Button>
       </label>
 
-    <UploadDialog/>
+    {UploadDialog()}
         {uploadProgress > 0 && (
             <Snackbar
               open={snackbarOpen}
