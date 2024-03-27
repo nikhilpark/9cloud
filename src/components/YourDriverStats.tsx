@@ -35,7 +35,7 @@ const YourDriveStatsCard = ({ folderStats, folderStatsLoading,user }: any) => {
 
     const pieChartData = {
         labels: ['Used Storage', 'Remaining Storage'],
-        series: [folderStats?.totalSizeInBytes, user?.planData?.maxStorage],
+        series: [folderStats?.totalSizeInBytes,   user?.planData?.maxStorage - folderStats?.totalSizeInBytes],
     };
 
 

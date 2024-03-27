@@ -80,6 +80,49 @@ export const fetchFilesFromS3 = async (): Promise<S3File[]> => {
   }
   return [];
 }
+ 
+export const renameFile = async (oldKey: string, newKey: string) => {
+  try {
+    // 1. Copy the object with the new key
+    await s3.copyObject({
+      Bucket: String(process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME),
+      CopySource: `${process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME}/${oldKey}`,
+      Key: newKey,
+    }).promise();
+
+    // 2. Delete the original object
+    await s3.deleteObject({
+      Bucket: String(process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME),
+      Key: oldKey,
+    }).promise();
+    // Log success message
+    console.log('File renamed successfully:', oldKey, 'to', newKey);
+    return "success"
+  } catch (error) {
+    console.error('Error renaming file:', error);
+    throw error;
+  }
+};
+
+export const deleteFile = async (key: string) => {
+  try {
+    const params = {
+      Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
+      Key: key,
+    };
+
+    //@ts-ignore
+    await s3.deleteObject(params).promise();
+
+    // Handle any additional logic after successful deletion, such as updating database records
+
+    console.log('File deleted successfully:', key);
+return "success"
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    throw error;
+  }
+};
 
 export const fetchRecentFilesFromS3 = async (count: number) => {
   try {

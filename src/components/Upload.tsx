@@ -21,8 +21,8 @@ const FileUploadButton: React.FC<FileUploadButtonProps> = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-  const [uploadDialogOpen,setUploadDilaogOpen] = useState<boolean>(false);
-const router = useRouter()
+  const [uploadDialogOpen, setUploadDilaogOpen] = useState<boolean>(false);
+  const router = useRouter()
   useEffect(() => {
     // Open the snackbar when progress starts
     if (uploadProgress > 0 && uploadProgress < 100) {
@@ -57,10 +57,10 @@ const router = useRouter()
     }
   };
 
-  const initiateUpload = async (file:File) => {
+  const initiateUpload = async (file: File) => {
     try {
       const expirationTime = 50;
-      const signedUrl:URL = await generateSignedUrl(file.name, expirationTime);
+      const signedUrl: URL = await generateSignedUrl(file.name, expirationTime);
 
       // Create a FormData object and append the file to it
       const formData = new FormData();
@@ -81,9 +81,9 @@ const router = useRouter()
         console.log('Upload completed!');
         setUploadProgress(100);
         setSelectedFile(null) // Set progress to 100% when upload is completed
-        setTimeout(()=>{
+        setTimeout(() => {
           router.refresh()
-        },1000)
+        }, 1000)
       });
 
       // Open the connection and send the file using the signed URL
@@ -99,22 +99,33 @@ const router = useRouter()
   };
 
 
-  const UploadDialog =  () => {
+  const UploadDialog = () => {
     return (<Dialog
-      open={Boolean(selectedFile)}
-      onClose={()=>{
+      open={selectedFile?true:false}
+      onClose={() => {
         setSelectedFile(null)
       }}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
 
-<div>
-<Card style={{  padding:'2rem'}}>
-
+        <Card style={{ padding: '2rem' }}>
+  {selectedFile && (
+        <div>
+          <p>Selected File: {selectedFile.name}</p>
       
+        </div>
+      )}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleUploadClick}
+          >
+            Upload          
+            </Button>
 
-      {selectedFile && (
+
+          {/* {selectedFile && (
         <div>
           <p>Selected File: {selectedFile.name}</p>
           <Button
@@ -125,43 +136,42 @@ const router = useRouter()
 Upload          </Button>
       
         </div>
-      )}
+      )} */}
 
-     </Card>
-    </div>
+        </Card>
 
-     
-     
-      
+
+
+
     </Dialog>)
   }
 
 
   return (
     <div>
-  
-  <Input
+
+      <Input
         type="file"
         id="fileInput"
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
       <label htmlFor="fileInput">
-        <Button   variant="contained" color="primary" component="span">
-        Upload
+        <Button variant="contained" color="primary" component="span">
+          Upload
         </Button>
       </label>
 
-    {UploadDialog()}
-        {uploadProgress > 0 && (
-            <Snackbar
-              open={snackbarOpen}
-              autoHideDuration={6000} // Adjust as needed
-              onClose={handleCloseSnackbar}
-              message={`Upload Progress: ${uploadProgress.toFixed(2)}%`}
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            />
-          )}
+      {UploadDialog()}
+      {uploadProgress > 0 && (
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={6000} // Adjust as needed
+          onClose={handleCloseSnackbar}
+          message={`Upload Progress: ${uploadProgress.toFixed(2)}%`}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        />
+      )}
     </div>
   );
 };
